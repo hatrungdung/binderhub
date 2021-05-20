@@ -31,6 +31,7 @@ from traitlets import (
     default,
     observe,
     validate,
+    Type
 )
 from traitlets.config import Application
 from jupyterhub.services.auth import HubOAuthCallbackHandler
@@ -219,6 +220,15 @@ class BinderHub(Application):
         - repo_url: the repository URL used to build the image
         """,
         config=True,
+    )
+
+    docker_registry_class = Type(
+        DockerRegistry,
+        help="""
+        Change this to support different Docker container registries.
+        The default works with GCR, ACR and DockerHub. Use `AWSElasticContainerRegistry` for AWS ECR.
+        """,
+        config=True
     )
 
     sticky_builds = Bool(
@@ -659,7 +669,7 @@ class BinderHub(Application):
         ])
         jinja_env = Environment(loader=loader, **jinja_options)
         if self.use_registry and self.builder_required:
-            registry = DockerRegistry(parent=self)
+            registry = self.docker_registry_class(parent=self)
         else:
             registry = None
 

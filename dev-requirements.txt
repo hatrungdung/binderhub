@@ -9,3 +9,4 @@ pytest-asyncio
 pytest-cov
 requests
 ruamel.yaml>=0.15
+boto3
